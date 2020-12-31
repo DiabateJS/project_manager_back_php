@@ -87,15 +87,13 @@ class BdManager
 
   function executeInsert($query)
   {
-
-        try
-    	  {
+	  $result = null;
+        try {
             $result = $this->_pdo->query($query, PDO::FETCH_CLASS, 'stdClass');
         }
         catch(Exception $e)
         {
         	  $this->_msgError = "[CLS::BdManager][FCT::executeInsert] Erreur : ".$e->getMessage();
-
         	  return $result;
         }
 

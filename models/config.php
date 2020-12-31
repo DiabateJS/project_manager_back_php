@@ -8,7 +8,7 @@ class GlobalParams
           "host" => "localhost",
           "user" => "root",
           "password" => "",
-          "bdname" => "identifiants"
+          "bdname" => "project_manager"
         );
     }
 }
