@@ -1,6 +1,7 @@
 <?php
-include_once('models/config.php');
+    include_once('models/config.php');
   include_once('apiauthent.php');
+  include_once('models/projectManager.php');
   include_once('models/userManager.php');
   header('Access-Control-Allow-Origin: *');
   header('Content-Type: application/json');
