@@ -3,6 +3,8 @@ include_once('config.php');
 include_once('bd.php');
 include_once('project.php');
 include_once('tacheManager.php');
+include_once('constants.php');
+include_once('util/helper.php');
 
 class ProjectManager
 {
@@ -39,10 +41,11 @@ class ProjectManager
 
     public function getProjectById($id)
     {
-        $sql = "select * from projet where id = ".$id;
+        $sql = "select * from projet where id = :idProjet";
+        $dico = array ("idProjet" => $id);
         $bdMan = new BdManager();
         $entetes = array("id","libelle","etat","description");
-        $res = $bdMan->executeSelect($sql,$entetes);
+        $res = $bdMan->executePreparedSelect($sql,$dico,$entetes);
         $_project = null;
 
         if (count($res) > 0)
@@ -62,46 +65,50 @@ class ProjectManager
 
     public function updateProject($idProjet, $newProjet)
     {
-        $resultat = array (
-          "code" => "ERROR",
-          "message" => ""
+        $resultat = Helper::createResponseObject();
+        $sql = "update projet set libelle = :libelle , etat = :etat , description = :description where id = :idProjet ";
+        $dicoParam = array(
+            "libelle" => $newProjet->libelle,
+            "etat" => $newProjet->etat,
+            "description" => $newProjet->description,
+            "idProjet" => $idProjet
         );
-        $sql = "update projet set libelle = '".$newProjet->libelle."' , etat = '".$newProjet->etat."'";
-        $sql .= " , description = '".$newProjet->description."' where id = ".$idProjet;
         $bdMan = new BdManager();
-        $bdMan->executeUpdate($sql);
-        $resultat["code"] = "SUCCES";
+        $bdMan->executePreparedQuery($sql, $dicoParam);
+        $resultat["code"] = Constants::$SUCCES_CODE;
         return $resultat;
     }
 
     public function createProject($newProjet)
     {
-        $resultat = array (
-            "code" => "ERROR",
-            "message" => ""
+        $resultat = Helper::createResponseObject();
+        $sql = "insert into projet (libelle, etat, description) values (:libelle, :etat, :description)";
+        $dicoParam = array(
+          "libelle" => $newProjet->libelle,
+          "etat" => $newProjet->etat,
+          "description" => $newProjet->description
         );
-        $sql = "insert into projet (libelle, etat, description) values ('".$newProjet->libelle."','".$newProjet->etat."','".$newProjet->description."')";
         $bdMan = new BdManager();
-        $bdMan->executeInsert($sql);
-        $resultat["code"] = "SUCCES";
+        $bdMan->executePreparedQuery($sql, $dicoParam);
+        $resultat["code"] = Constants::$SUCCES_CODE;
         return $resultat;
     }
 
     public function deleteProject($id){
-        $resultat = array (
-            "code" => "ERROR",
-            "message" => ""
-        );
-        $sql = "select * from tache where idProjet = ".$id;
+        $resultat = Helper::createResponseObject();
+        $sql = "select * from tache where idProjet =  :idProjet";
         $bdMan = new BdManager();
+        $dicoParam = array(
+            "idProjet" => $id
+        );
         $entete = array("id","libelle","estimation","description","etat","idProjet","idUser");
-        $res = $bdMan->executeSelect($sql, $entete);
+        $res = $bdMan->executePreparedSelect($sql, $dicoParam, $entete);
         if (count($res) == 0){
-            $sql = "delete from projet where id = ".$id;
-            $bdMan->executeDelete($sql);
-            $resultat["code"] = "SUCCES";
+            $sql = "delete from projet where id = :idProjet";
+            $bdMan->executePreparedQuery($sql, $dicoParam);
+            $resultat["code"] = Constants::$SUCCES_CODE;
         }else{
-            $resultat["code"] = "WARNING";
+            $resultat["code"] = Constants::$WARNING_CODE;
             $resultat["message"] = "Suppression impossible. Il existe des taches associes au projet.";
         }
         return $resultat;

@@ -3,6 +3,7 @@ include_once('config.php');
 include_once('bd.php');
 include_once('tache.php');
 include_once('user.php');
+include_once('constants.php');
 
 class UserManager
 {
@@ -39,26 +40,30 @@ class UserManager
     }
 
     function isAuth($login, $pwd){
-        $resultat = array(
-          "code" => "ERROR",
-          "message" => ""
+        $resultat = Helper::createResponseObject();
+        $sql = "select * from users where login = :login and password = :password";
+        $dicoParam = array(
+          "login" => $login,
+          "password" => $pwd
         );
-        $sql = "select * from users where login = '".$login."' and password = '".$pwd."'";
         $bdMan = new BdManager();
         $entetes = array("id","fullname","login","password","email","profile");
-        $res = $bdMan->executeSelect($sql,$entetes);
+        $res = $bdMan->executePreparedSelect($sql, $dicoParam, $entetes);
         if (count($res) > 0){
-            $resultat["code"] = "SUCCES";
+            $resultat["code"] = Constants::$SUCCES_CODE;
             $resultat["message"] = $res[0]["fullname"];
         }
         return $resultat;
     }
 
     public function getUserById($idUser){
-        $sql = "select * from users where id = ".$idUser;
+        $sql = "select * from users where id = :idUser";
+        $dicoParam = array(
+            "idUser" => $idUser
+        );
         $bdMan = new BdManager();
         $entetes = array("id","fullname","login","password","email","profile");
-        $res = $bdMan->executeSelect($sql, $entetes);
+        $res = $bdMan->executePreparedSelect($sql, $dicoParam, $entetes);
         $_user = null;
         if (count($res) > 0)
         {
@@ -75,48 +80,54 @@ class UserManager
 
     public function updateUser($id, $newUser)
     {
-        $resultat = array (
-            "code" => "ERROR",
-            "message" => ""
+        $resultat = Helper::createResponseObject();;
+        $sql = "update users set fullname = :fullname , login = :login , password = :password , email = :email , profile = :profile where id = :id";
+        $dicoParam = array(
+            "fullname" => $newUser->fullname,
+            "login" => $newUser->login,
+            "password" => $newUser->password,
+            "email" => $newUser->email,
+            "profile" => $newUser->profile,
+            "id" => $id
         );
-        $sql = "update users set fullname = '".$newUser->fullname."' , login = '".$newUser->login."'";
-        $sql .= " , password = '".$newUser->password."', email = '".$newUser->email."' , profile = '".$newUser->profile."'";
-        $sql .= " where id = ".$id;
         $bdMan = new BdManager();
-        $bdMan->executeUpdate($sql);
-        $resultat["code"] = "SUCCES";
+        $bdMan->executePreparedQuery($sql, $dicoParam);
+        $resultat["code"] = Constants::$SUCCES_CODE;
         return $resultat;
     }
 
     public function createUser($newUser)
     {
-        $resultat = array (
-            "code" => "ERROR",
-            "message" => ""
+        $resultat = Helper::createResponseObject();;
+        $sql = "insert into users (fullname, login, password, email, profile) values (:fullname, :login, :password, :email, :profile)";
+        $dicoParam = array(
+            "fullname" => $newUser->fullname,
+            "login" => $newUser->login,
+            "password" => $newUser->password,
+            "email" => $newUser->email,
+            "profile" => $newUser->profile
         );
-        $sql = "insert into users (fullname, login, password, email, profile) values (";
-        $sql .= "'".$newUser->fullname."','".$newUser->login."','".$newUser->password."','".$newUser->email."','".$newUser->profile."')";
         $bdMan = new BdManager();
-        $bdMan->executeInsert($sql);
-        $resultat["code"] = "SUCCES";
+        $bdMan->executePreparedQuery($sql, $dicoParam);
+        $resultat["code"] = Constants::$SUCCES_CODE;
         return $resultat;
     }
 
     public function deleteUser($id){
-        $resultat = array (
-            "code" => "ERROR",
-            "message" => ""
+        $resultat = Helper::createResponseObject();
+        $sql = "select * from tache where idUser = :idUser";
+        $dicoParam = array(
+            "idUser" => $id
         );
-        $sql = "select * from tache where idUser = ".$id;
         $bdMan = new BdManager();
         $entete = array("id","libelle","estimation","description","etat","idProjet","idUser");
-        $res = $bdMan->executeSelect($sql, $entete);
+        $res = $bdMan->executePreparedSelect($sql, $dicoParam, $entete);
         if (count($res) == 0){
-            $sql = "delete from users where id = ".$id;
-            $bdMan->executeDelete($sql);
-            $resultat["code"] = "SUCCES";
+            $sql = "delete from users where id = :idUser";
+            $bdMan->executePreparedQuery($sql, $dicoParam);
+            $resultat["code"] = Constants::$SUCCES_CODE;
         }else{
-            $resultat["code"] = "WARNING";
+            $resultat["code"] = Constants::$WARNING_CODE;
             $resultat["message"] = "Suppression impossible. Utilisateur affecté à une ou plusieurs taches.";
         }
         return $resultat;

@@ -2,6 +2,8 @@
 include_once('config.php');
 include_once('bd.php');
 include_once('tache.php');
+include_once('constants.php');
+
 
 class TacheManager
 {
@@ -13,10 +15,13 @@ class TacheManager
 
     public function getAllProjectsTache($idProjet)
     {
-        $sql = "select * from tache where idProjet = " . $idProjet;
+        $sql = "select * from tache where idProjet = :idProjet";
+        $dicoParam = array(
+            "idProjet" => $idProjet
+        );
         $bdMan = new BdManager();
         $entetes = array("id", "libelle", "estimation", "description", "etat", "idProjet", "idUser");
-        $res = $bdMan->executeSelect($sql, $entetes);
+        $res = $bdMan->executePreparedSelect($sql, $dicoParam, $entetes);
         $taches = array();
 
         for ($i = 0; $i < count($res); $i++) {
@@ -33,19 +38,20 @@ class TacheManager
             $taches[] = $currentTache;
 
         }
-
-
         return $taches;
     }
 
     public function getTacheWithIds($idProjet, $idTache)
     {
-
         $sql = "select id, libelle, estimation, description, etat, idProjet, (select fullname from users where id = tache.idUser) as user ";
-        $sql .= "from tache where idProjet = ".$idProjet." and id = ".$idTache;
+        $sql .= "from tache where idProjet = :idProjet and id = :idTache";
+        $dicoParam = array(
+          "idProjet" => $idProjet,
+          "idTache" => $idTache
+        );
         $bdMan = new BdManager();
         $entetes = array("id","libelle","estimation","description","etat","idProjet","user");
-        $res = $bdMan->executeSelect($sql,$entetes);
+        $res = $bdMan->executePreparedSelect($sql, $dicoParam, $entetes);
         $tache = null;
 
         if (count($res) > 0)
@@ -66,45 +72,54 @@ class TacheManager
 
     public function updateTache($idTache, $newTache)
     {
-        $resultat = array (
-            "code" => "ERROR",
-            "message" => ""
+        $resultat = Helper::createResponseObject();
+        $sql = "update tache set libelle = :libelle , estimation = :estimation , description = :description , etat = :etat , idProjet = :idProjet , idUser = ";
+        $sql .= "(select id from users where fullname = :user) where id = :idTache";
+        $dicoParam = array(
+            "libelle" => $newTache->libelle,
+            "estimation" => $newTache->estimation,
+            "description" => $newTache->description,
+            "etat" => $newTache->etat,
+            "idProjet" => $newTache->idProjet,
+            "user" => $newTache->user,
+            "idTache" => $idTache
         );
-        $sql = "update tache set libelle = '".$newTache->libelle."' , estimation = '".$newTache->estimation."'";
-        $sql .= " , description = '".$newTache->description."', etat = '".$newTache->etat."' , idProjet = ".$newTache->idProjet." , idUser = ";
-        $sql .= "(select id from users where fullname = '".$newTache->user."') where id = ".$idTache;
         $bdMan = new BdManager();
-        $bdMan->executeUpdate($sql);
-        $resultat["code"] = "SUCCES";
+        $bdMan->executePreparedQuery($sql, $dicoParam);
+        $resultat["code"] = Constants::$SUCCES_CODE;
         $resultat["message"] = "Projet mis a jour avec succes !";
         return $resultat;
     }
 
     public function createTache($newTache)
     {
-        $resultat = array (
-            "code" => "ERROR",
-            "message" => ""
+        $resultat = Helper::createResponseObject();
+        $sql = "insert into tache(libelle, estimation, description, etat, idProjet, idUser) values (:libelle, :estimation, :description, :etat, :idProjet";
+        $sql .=" ,(select id from users where fullname = :user))";
+        $dicoParam = array (
+          "libelle" => $newTache->libelle,
+          "estimation" => $newTache->estimation,
+          "description" => $newTache->description,
+          "etat" => $newTache->etat,
+          "idProjet" => $newTache->idProjet,
+          "user" => $newTache->user
         );
-        $sql = "insert into tache(libelle, estimation, description, etat, idProjet, idUser) values (";
-        $sql .= "'".$newTache->libelle."',".$newTache->estimation.",'".$newTache->description."','".$newTache->etat."'";
-        $sql .=",".$newTache->idProjet.",(select id from users where fullname = '".$newTache->user."'))";
         $bdMan = new BdManager();
-        $bdMan->executeInsert($sql);
-        $resultat["code"] = "SUCCES";
+        $bdMan->executePreparedQuery($sql, $dicoParam);
+        $resultat["code"] = Constants::$SUCCES_CODE;
         $resultat["message"] = "Projet mis a jour avec succes !";
         return $resultat;
     }
 
     public function deleteTache($id){
-        $resultat = array (
-            "code" => "ERROR",
-            "message" => ""
+        $resultat = Helper::createResponseObject();
+        $sql = "delete from tache where id = :idTache";
+        $dicoParam = array(
+            "idTache" => $id
         );
-        $sql = "delete from tache where id = ".$id;
         $bdMan = new BdManager();
-        $bdMan->executeDelete($sql);
-        $resultat["code"] = "SUCCES";
+        $bdMan->executePreparedQuery($sql, $dicoParam);
+        $resultat["code"] = Constants::$SUCCES_CODE;
         $resultat["message"] = "Tache supprimée avec succes !";
         return $resultat;
     }
