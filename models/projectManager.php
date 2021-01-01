@@ -15,7 +15,7 @@ class ProjectManager
     public function getAllProjects()
     {
 
-        $sql = "select * from projet";
+        $sql = "select * from pm_projet";
         $bdMan = new BdManager();
         $entetes = array("id", "libelle", "etat", "description");
         $res = $bdMan->executeSelect($sql, $entetes);
