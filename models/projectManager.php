@@ -39,7 +39,7 @@ class ProjectManager
 
     public function getProjectById($id)
     {
-        $sql = "select * from projet where id = ".$id;
+        $sql = "select * from pm_projet where id = ".$id;
         $bdMan = new BdManager();
         $entetes = array("id","libelle","etat","description");
         $res = $bdMan->executeSelect($sql,$entetes);
@@ -66,7 +66,7 @@ class ProjectManager
           "code" => "ERROR",
           "message" => ""
         );
-        $sql = "update projet set libelle = '".$newProjet->libelle."' , etat = '".$newProjet->etat."'";
+        $sql = "update pm_projet set libelle = '".$newProjet->libelle."' , etat = '".$newProjet->etat."'";
         $sql .= " , description = '".$newProjet->description."' where id = ".$idProjet;
         $bdMan = new BdManager();
         $bdMan->executeUpdate($sql);
@@ -80,7 +80,7 @@ class ProjectManager
             "code" => "ERROR",
             "message" => ""
         );
-        $sql = "insert into projet (libelle, etat, description) values ('".$newProjet->libelle."','".$newProjet->etat."','".$newProjet->description."')";
+        $sql = "insert into pm_projet (libelle, etat, description) values ('".$newProjet->libelle."','".$newProjet->etat."','".$newProjet->description."')";
         $bdMan = new BdManager();
         $bdMan->executeInsert($sql);
         $resultat["code"] = "SUCCES";
@@ -92,12 +92,12 @@ class ProjectManager
             "code" => "ERROR",
             "message" => ""
         );
-        $sql = "select * from tache where idProjet = ".$id;
+        $sql = "select * from pm_tache where idProjet = ".$id;
         $bdMan = new BdManager();
         $entete = array("id","libelle","estimation","description","etat","idProjet","idUser");
         $res = $bdMan->executeSelect($sql, $entete);
         if (count($res) == 0){
-            $sql = "delete from projet where id = ".$id;
+            $sql = "delete from pm_projet where id = ".$id;
             $bdMan->executeDelete($sql);
             $resultat["code"] = "SUCCES";
         }else{

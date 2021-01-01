@@ -5,10 +5,10 @@ class GlobalParams
     public static function getBdDico()
     {
         return array(
-          "host" => "localhost",
-          "user" => "root",
-          "password" => "",
-          "bdname" => "project_manager"
+          "host" => "185.98.131.90",
+          "user" => "djste1070339",
+          "password" => "da6ysjpqpp",
+          "bdname" => "djste1070339"
         );
     }
 }

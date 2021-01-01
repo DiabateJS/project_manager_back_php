@@ -14,7 +14,7 @@ class UserManager
 
     public function getAllUsers()
     {
-        $sql = "select * from users ";
+        $sql = "select * from pm_users ";
         $bdMan = new BdManager();
         $entetes = array("id","fullname","login","password","email","profile");
         $res = $bdMan->executeSelect($sql,$entetes);
@@ -43,7 +43,7 @@ class UserManager
           "code" => "ERROR",
           "message" => ""
         );
-        $sql = "select * from users where login = '".$login."' and password = '".$pwd."'";
+        $sql = "select * from pm_users where login = '".$login."' and password = '".$pwd."'";
         $bdMan = new BdManager();
         $entetes = array("id","fullname","login","password","email","profile");
         $res = $bdMan->executeSelect($sql,$entetes);
@@ -55,7 +55,7 @@ class UserManager
     }
 
     public function getUserById($idUser){
-        $sql = "select * from users where id = ".$idUser;
+        $sql = "select * from pm_users where id = ".$idUser;
         $bdMan = new BdManager();
         $entetes = array("id","fullname","login","password","email","profile");
         $res = $bdMan->executeSelect($sql, $entetes);
@@ -79,7 +79,7 @@ class UserManager
             "code" => "ERROR",
             "message" => ""
         );
-        $sql = "update users set fullname = '".$newUser->fullname."' , login = '".$newUser->login."'";
+        $sql = "update pm_users set fullname = '".$newUser->fullname."' , login = '".$newUser->login."'";
         $sql .= " , password = '".$newUser->password."', email = '".$newUser->email."' , profile = '".$newUser->profile."'";
         $sql .= " where id = ".$id;
         $bdMan = new BdManager();
@@ -94,7 +94,7 @@ class UserManager
             "code" => "ERROR",
             "message" => ""
         );
-        $sql = "insert into users (fullname, login, password, email, profile) values (";
+        $sql = "insert into pm_users (fullname, login, password, email, profile) values (";
         $sql .= "'".$newUser->fullname."','".$newUser->login."','".$newUser->password."','".$newUser->email."','".$newUser->profile."')";
         $bdMan = new BdManager();
         $bdMan->executeInsert($sql);
@@ -107,12 +107,12 @@ class UserManager
             "code" => "ERROR",
             "message" => ""
         );
-        $sql = "select * from tache where idUser = ".$id;
+        $sql = "select * from pm_tache where idUser = ".$id;
         $bdMan = new BdManager();
         $entete = array("id","libelle","estimation","description","etat","idProjet","idUser");
         $res = $bdMan->executeSelect($sql, $entete);
         if (count($res) == 0){
-            $sql = "delete from users where id = ".$id;
+            $sql = "delete from pm_users where id = ".$id;
             $bdMan->executeDelete($sql);
             $resultat["code"] = "SUCCES";
         }else{

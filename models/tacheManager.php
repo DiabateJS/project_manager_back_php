@@ -13,7 +13,7 @@ class TacheManager
 
     public function getAllProjectsTache($idProjet)
     {
-        $sql = "select * from tache where idProjet = " . $idProjet;
+        $sql = "select * from pm_tache where idProjet = " . $idProjet;
         $bdMan = new BdManager();
         $entetes = array("id", "libelle", "estimation", "description", "etat", "idProjet", "idUser");
         $res = $bdMan->executeSelect($sql, $entetes);
@@ -41,8 +41,8 @@ class TacheManager
     public function getTacheWithIds($idProjet, $idTache)
     {
 
-        $sql = "select id, libelle, estimation, description, etat, idProjet, (select fullname from users where id = tache.idUser) as user ";
-        $sql .= "from tache where idProjet = ".$idProjet." and id = ".$idTache;
+        $sql = "select id, libelle, estimation, description, etat, idProjet, (select fullname from pm_users where id = pm_tache.idUser) as user ";
+        $sql .= "from pm_tache where idProjet = ".$idProjet." and id = ".$idTache;
         $bdMan = new BdManager();
         $entetes = array("id","libelle","estimation","description","etat","idProjet","user");
         $res = $bdMan->executeSelect($sql,$entetes);
@@ -70,9 +70,9 @@ class TacheManager
             "code" => "ERROR",
             "message" => ""
         );
-        $sql = "update tache set libelle = '".$newTache->libelle."' , estimation = '".$newTache->estimation."'";
+        $sql = "update pm_tache set libelle = '".$newTache->libelle."' , estimation = '".$newTache->estimation."'";
         $sql .= " , description = '".$newTache->description."', etat = '".$newTache->etat."' , idProjet = ".$newTache->idProjet." , idUser = ";
-        $sql .= "(select id from users where fullname = '".$newTache->user."') where id = ".$idTache;
+        $sql .= "(select id from pm_users where fullname = '".$newTache->user."') where id = ".$idTache;
         $bdMan = new BdManager();
         $bdMan->executeUpdate($sql);
         $resultat["code"] = "SUCCES";
@@ -86,9 +86,9 @@ class TacheManager
             "code" => "ERROR",
             "message" => ""
         );
-        $sql = "insert into tache(libelle, estimation, description, etat, idProjet, idUser) values (";
+        $sql = "insert into pm_tache(libelle, estimation, description, etat, idProjet, idUser) values (";
         $sql .= "'".$newTache->libelle."',".$newTache->estimation.",'".$newTache->description."','".$newTache->etat."'";
-        $sql .=",".$newTache->idProjet.",(select id from users where fullname = '".$newTache->user."'))";
+        $sql .=",".$newTache->idProjet.",(select id from pm_users where fullname = '".$newTache->user."'))";
         $bdMan = new BdManager();
         $bdMan->executeInsert($sql);
         $resultat["code"] = "SUCCES";
@@ -101,7 +101,7 @@ class TacheManager
             "code" => "ERROR",
             "message" => ""
         );
-        $sql = "delete from tache where id = ".$id;
+        $sql = "delete from pm_tache where id = ".$id;
         $bdMan = new BdManager();
         $bdMan->executeDelete($sql);
         $resultat["code"] = "SUCCES";
