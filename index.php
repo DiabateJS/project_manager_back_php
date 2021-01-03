@@ -3,6 +3,7 @@
   include_once('apiauthent.php');
   include_once('models/projectManager.php');
   include_once('models/userManager.php');
+  include_once('models/statistiqueManager.php');
   header('Access-Control-Allow-Origin: *');
   header('Content-Type: application/json');
 
@@ -136,6 +137,10 @@
             $userManager = new UserManager();
             echo json_encode($userManager->deleteUser($id));
         }
+    }
+    if ($operation == "stat"){
+        $statManager = new statistiqueManager();
+        echo json_encode($statManager->getStats());
     }
 
 
