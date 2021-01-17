@@ -17,9 +17,9 @@ class ProjectManager
     public function getAllProjects()
     {
 
-        $sql = "select * from pm_projet";
+        $sql = Constants::$SQL_SELECT_PROJECTS;
         $bdMan = new BdManager();
-        $entetes = array("id", "libelle", "etat", "description");
+        $entetes = array("id", "libelle", "etat", "dateDebut","dateFin","description");
         $res = $bdMan->executeSelect($sql, $entetes);
         $projects = array();
 
@@ -27,11 +27,13 @@ class ProjectManager
             $id = $res[$i]["id"];
             $libelle = $res[$i]["libelle"];
             $etat = $res[$i]["etat"];
+            $dateDebut = $res[$i]["dateDebut"];
+            $dateFin = $res[$i]["dateFin"];
             $description = $res[$i]["description"];
             $taches = [];
             $tacheManager = new TacheManager();
             $taches = $tacheManager->getAllProjectsTache($id);
-            $currentProject = new Project($id, $libelle, $etat, $description, $taches);
+            $currentProject = new Project($id, $libelle, $etat, $dateDebut, $dateFin, $description, $taches);
             $projects[] = $currentProject;
         }
 
@@ -41,10 +43,10 @@ class ProjectManager
 
     public function getProjectById($id)
     {
-        $sql = "select * from pm_projet where id = :idProjet";
+        $sql = Constants::$SQL_SELECT_PROJECT;
         $dico = array ("idProjet" => $id);
         $bdMan = new BdManager();
-        $entetes = array("id","libelle","etat","description");
+        $entetes = array("id","libelle","etat","dateDebut","dateFin","description");
         $res = $bdMan->executePreparedSelect($sql,$dico,$entetes);
         $_project = null;
 
@@ -53,11 +55,13 @@ class ProjectManager
             $_id = $res[0]["id"];
             $_libelle = $res[0]["libelle"];
             $_etat = $res[0]["etat"];
+            $_dateDebut = $res[0]["dateDebut"];
+            $_dateFin = $res[0]["dateFin"];
             $_description = $res[0]["description"];
 
             $tacheManager = new TacheManager();
             $taches = $tacheManager->getAllProjectsTache($_id);
-            $_project = new Project($_id, $_libelle, $_etat, $_description, $taches);
+            $_project = new Project($_id, $_libelle, $_etat, $_dateDebut, $_dateFin, $_description, $taches);
         }
 
         return $_project;
@@ -66,10 +70,12 @@ class ProjectManager
     public function updateProject($idProjet, $newProjet)
     {
         $resultat = Helper::createResponseObject();
-        $sql = "update pm_projet set libelle = :libelle , etat = :etat , description = :description where id = :idProjet ";
+        $sql = Constants::$SQL_UPDATE_PROJECT;
         $dicoParam = array(
             "libelle" => $newProjet->libelle,
             "etat" => $newProjet->etat,
+            "dateDebut" => $newProjet->dateDebut,
+            "dateFin" => $newProjet->dateFin,
             "description" => $newProjet->description,
             "idProjet" => $idProjet
         );
@@ -82,10 +88,12 @@ class ProjectManager
     public function createProject($newProjet)
     {
         $resultat = Helper::createResponseObject();
-        $sql = "insert into pm_projet (libelle, etat, description) values (:libelle, :etat, :description)";
+        $sql = Constants::$SQL_INSERT_PROJECT;
         $dicoParam = array(
           "libelle" => $newProjet->libelle,
           "etat" => $newProjet->etat,
+          "dateDebut" => $newProjet->dateDebut,
+          "dateFin" => $newProjet->dateFin,
           "description" => $newProjet->description
         );
         $bdMan = new BdManager();
@@ -96,7 +104,7 @@ class ProjectManager
 
     public function deleteProject($id){
         $resultat = Helper::createResponseObject();
-        $sql = "select * from pm_tache where idProjet =  :idProjet";
+        $sql = Constants::$SQL_SELECT_TASK_BEFORE_DELETE_PROJECT;
         $bdMan = new BdManager();
         $dicoParam = array(
             "idProjet" => $id
@@ -104,7 +112,7 @@ class ProjectManager
         $entete = array("id","libelle","estimation","description","etat","idProjet","idUser");
         $res = $bdMan->executePreparedSelect($sql, $dicoParam, $entete);
         if (count($res) == 0){
-            $sql = "delete from pm_projet where id = :idProjet";
+            $sql = Constants::$SQL_DELETE_PROJECT;
             $bdMan->executePreparedQuery($sql, $dicoParam);
             $resultat["code"] = Constants::$SUCCES_CODE;
         }else{

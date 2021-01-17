@@ -15,12 +15,12 @@ class TacheManager
 
     public function getAllProjectsTache($idProjet)
     {
-        $sql = "select * from pm_tache where idProjet = :idProjet";
+        $sql = Constants::$SQL_SELECT_TASKS;
         $dicoParam = array(
             "idProjet" => $idProjet
         );
         $bdMan = new BdManager();
-        $entetes = array("id", "libelle", "estimation", "description", "etat", "idProjet", "idUser");
+        $entetes = array("id", "libelle", "estimation", "dateDebut","dateFin","description", "etat", "idProjet", "idUser");
         $res = $bdMan->executePreparedSelect($sql, $dicoParam, $entetes);
         $taches = array();
 
@@ -28,12 +28,14 @@ class TacheManager
             $id = $res[$i]["id"];
             $libelle = $res[$i]["libelle"];
             $estimation = $res[$i]["estimation"];
+            $dateDebut = $res[$i]["dateDebut"];
+            $dateFin = $res[$i]["dateFin"];
             $description = $res[$i]["description"];
             $etat = $res[$i]["etat"];
             $idProjet = $res[$i]["idProjet"];
             $idUser = $res[$i]["idUser"];
 
-            $currentTache = new Tache($id, $libelle, $estimation, $description, $etat, $idProjet, $idUser);
+            $currentTache = new Tache($id, $libelle, $estimation, $dateDebut, $dateFin, $description, $etat, $idProjet, $idUser);
 
             $taches[] = $currentTache;
 
@@ -43,14 +45,14 @@ class TacheManager
 
     public function getTacheWithIds($idProjet, $idTache)
     {
-        $sql = "select id, libelle, estimation, description, etat, idProjet, (select fullname from pm_users where id = pm_tache.idUser) as user ";
-        $sql .= "from pm_tache where idProjet = :idProjet and id = :idTache";
+
+        $sql = Constants::$SQL_SELECT_TASK;
         $dicoParam = array(
           "idProjet" => $idProjet,
           "idTache" => $idTache
         );
         $bdMan = new BdManager();
-        $entetes = array("id","libelle","estimation","description","etat","idProjet","user");
+        $entetes = array("id","libelle","estimation","dateDebut","dateFin","description","etat","idProjet","user");
         $res = $bdMan->executePreparedSelect($sql, $dicoParam, $entetes);
         $tache = null;
 
@@ -59,11 +61,13 @@ class TacheManager
             $_id = $res[0]["id"];
             $_libelle = $res[0]["libelle"];
             $_estimation = $res[0]["estimation"];
+            $_dateDebut = $res[0]["dateDebut"];
+            $_dateFin = $res[0]["dateFin"];
             $_description = $res[0]["description"];
             $_etat = $res[0]["etat"];
             $_idprojet = $res[0]["idProjet"];
             $user = $res[0]["user"];
-            $tache = new Tache($_id, $_libelle, $_estimation, $_description, $_etat, $_idprojet, $user);
+            $tache = new Tache($_id, $_libelle, $_estimation, $_dateDebut, $_dateFin, $_description, $_etat, $_idprojet, $user);
         }
 
         return $tache;
@@ -72,11 +76,12 @@ class TacheManager
     public function updateTache($idTache, $newTache)
     {
         $resultat = Helper::createResponseObject();
-        $sql = "update pm_tache set libelle = :libelle , estimation = :estimation , description = :description , etat = :etat , idProjet = :idProjet , idUser = ";
-        $sql .= "(select id from pm_users where fullname = :user) where id = :idTache";
+        $sql = Constants::$SQL_UPDATE_TASK;
         $dicoParam = array(
             "libelle" => $newTache->libelle,
             "estimation" => $newTache->estimation,
+            "dateDebut" => $newTache->dateDebut,
+            "dateFin" => $newTache->dateFin,
             "description" => $newTache->description,
             "etat" => $newTache->etat,
             "idProjet" => $newTache->idProjet,
@@ -93,11 +98,12 @@ class TacheManager
     public function createTache($newTache)
     {
         $resultat = Helper::createResponseObject();
-        $sql = "insert into pm_tache(libelle, estimation, description, etat, idProjet, idUser) values (:libelle, :estimation, :description, :etat, :idProjet";
-        $sql .=" ,(select id from pm_users where fullname = :user))";
+        $sql = Constants::$SQL_CREATE_TASK;
         $dicoParam = array (
           "libelle" => $newTache->libelle,
           "estimation" => $newTache->estimation,
+          "dateDebut" => $newTache->dateDebut,
+          "dateFin" => $newTache->dateFin,
           "description" => $newTache->description,
           "etat" => $newTache->etat,
           "idProjet" => $newTache->idProjet,
@@ -112,7 +118,7 @@ class TacheManager
 
     public function deleteTache($id){
         $resultat = Helper::createResponseObject();
-        $sql = "delete from pm_tache where id = :idTache";
+        $sql = Constants::$SQL_DELETE_TASK;
         $dicoParam = array(
             "idTache" => $id
         );
