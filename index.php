@@ -16,6 +16,8 @@
   $operation = isset($_GET["operation"]) ? $_GET["operation"] : "";
   $type = isset($_GET["type"]) ? $_GET["type"] : "";
 
+  $data = json_decode(file_get_contents("php://input"));
+
   if ($operation == "enum"){
       if ($type == "projets"){
           $projetManager = new ProjectManager();
@@ -55,33 +57,37 @@
   }
     if ($operation == "update"){
         if ($type == "projet"){
-            $idProjet = isset($_POST["idProjet"]) ? $_POST["idProjet"] : "";
-            $libelle = isset($_POST["libelle"]) ? $_POST["libelle"] : "";
-            $etat = isset($_POST["etat"]) ? $_POST["etat"] : "";
-            $description = isset($_POST["description"]) ? $_POST["description"] : "";
-            $newProjet = new Project($idProjet,$libelle,$etat,$description,[]);
+            $idProjet = $data->idProjet ?? "";
+            $libelle = $data->libelle ?? "";
+            $etat = $data->etat ?? "";
+            $dateDebut = $data->dateDebut ?? "";
+            $dateFin = $data->dateFin ?? "";
+            $description = $data->description ?? "";
+            $newProjet = new Project($idProjet,$libelle,$etat,$dateDebut, $dateFin, $description,[]);
             $projetManager = new ProjectManager();
             echo json_encode($projetManager->updateProject($idProjet, $newProjet));
         }
         if ($type == "tache"){
-            $idTache = isset($_POST["idTache"]) ? $_POST["idTache"] : "";
-            $idProjet = isset($_POST["idProjet"]) ? $_POST["idProjet"] : "";
-            $libelle = isset($_POST["libelle"]) ? $_POST["libelle"] : "";
-            $estimation = isset($_POST["estimation"]) ? $_POST["estimation"] : "";
-            $etat = isset($_POST["etat"]) ? $_POST["etat"] : "";
-            $description = isset($_POST["description"]) ? $_POST["description"] : "";
-            $user = isset($_POST["user"]) ? $_POST["user"] : "";
-            $newTache = new Tache($idTache, $libelle, $estimation, $description, $etat, $idProjet, $user);
+            $idTache = $data->idTache ?? "";
+            $idProjet = $data->idProjet ?? "";
+            $libelle = $data->libelle ?? "";
+            $estimation = $data->estimation ?? "";
+            $etat = $data->etat ?? "";
+            $dateDebut = $data->dateDebut ?? "";
+            $dateFin = $data->dateFin ?? "";
+            $description = $data->description ?? "";
+            $user = $data->user ?? "";
+            $newTache = new Tache($idTache, $libelle, $estimation, $dateDebut, $dateFin, $description, $etat, $idProjet, $user);
             $tacheManager = new TacheManager();
             echo json_encode($tacheManager->updateTache($idTache, $newTache));
         }
         if ($type == "user"){
-            $id = isset($_POST["id"]) ? $_POST["id"] : "";
-            $fullname = isset($_POST["fullname"]) ? $_POST["fullname"] : "";
-            $login = isset($_POST["login"]) ? $_POST["login"] : "";
-            $password = isset($_POST["password"]) ? $_POST["password"] : "";
-            $email = isset($_POST["email"]) ? $_POST["email"] : "";
-            $profile = isset($_POST["profile"]) ? $_POST["profile"] : "";
+            $id = $data->id ?? "";
+            $fullname = $data->fullname ?? "";
+            $login = $data->login ?? "";
+            $password = $data->password ?? "";
+            $email = $data->email ?? "";
+            $profile = $data->profile ?? "";
             $newUser = new User($id, $fullname, $login, $password, $email, $profile);
             $userManager = new UserManager();
             echo json_encode($userManager->updateUser($id, $newUser));
@@ -89,33 +95,37 @@
     }
     if ($operation == "create"){
         if ($type == "projet"){
-            $idProjet = isset($_POST["idProjet"]) ? $_POST["idProjet"] : "";
-            $libelle = isset($_POST["libelle"]) ? $_POST["libelle"] : "";
-            $etat = isset($_POST["etat"]) ? $_POST["etat"] : "";
-            $description = isset($_POST["description"]) ? $_POST["description"] : "";
-            $newProjet = new Project($idProjet,$libelle,$etat,$description,[]);
+            $idProjet = $data->idProjet ?? "";
+            $libelle = $data->libelle ?? "";
+            $etat = $data->etat ?? "";
+            $dateDebut = $data->dateDebut ?? "";
+            $dateFin = $data->dateFin ?? "";
+            $description = $data->description ?? "";
+            $newProjet = new Project($idProjet,$libelle,$etat,$dateDebut, $dateFin, $description,[]);
             $projetManager = new ProjectManager();
             echo json_encode($projetManager->createProject($newProjet));
         }
         if ($type == "tache"){
-            $idTache = isset($_POST["idTache"]) ? $_POST["idTache"] : "";
-            $idProjet = isset($_POST["idProjet"]) ? $_POST["idProjet"] : "";
-            $libelle = isset($_POST["libelle"]) ? $_POST["libelle"] : "";
-            $estimation = isset($_POST["estimation"]) ? $_POST["estimation"] : "";
-            $etat = isset($_POST["etat"]) ? $_POST["etat"] : "";
-            $description = isset($_POST["description"]) ? $_POST["description"] : "";
-            $user = isset($_POST["user"]) ? $_POST["user"] : "";
-            $newTache = new Tache($idTache, $libelle, $estimation, $description, $etat, $idProjet, $user);
+            $idTache = $data->idTache ?? "";
+            $idProjet = $data->idProjet ?? "";
+            $libelle = $data->libelle ?? "";
+            $estimation = $data->estimation ?? "";
+            $etat = $data->etat ?? "";
+            $dateDebut = $data->dateDebut ?? "";
+            $dateFin = $data->dateFin ?? "";
+            $description = $data->description ?? "";
+            $user = $data->user ?? "";
+            $newTache = new Tache($idTache, $libelle, $estimation, $dateDebut, $dateFin, $description, $etat, $idProjet, $user);
             $tacheManager = new TacheManager();
             echo json_encode($tacheManager->createTache($newTache));
         }
         if ($type == "user"){
-            $id = isset($_POST["id"]) ? $_POST["id"] : "";
-            $fullname = isset($_POST["fullname"]) ? $_POST["fullname"] : "";
-            $login = isset($_POST["login"]) ? $_POST["login"] : "";
-            $password = isset($_POST["password"]) ? $_POST["password"] : "";
-            $email = isset($_POST["email"]) ? $_POST["email"] : "";
-            $profile = isset($_POST["profile"]) ? $_POST["profile"] : "";
+            $id = $data->id ?? "";
+            $fullname = $data->fullname ?? "";
+            $login = $data->login ?? "";
+            $password = $data->password ?? "";
+            $email = $data->email ?? "";
+            $profile = $data->profile ?? "";
             $newUser = new User($id, $fullname, $login, $password, $email, $profile);
             $userManager = new UserManager();
             echo json_encode($userManager->createUser($newUser));

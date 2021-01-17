@@ -7,6 +7,8 @@ class Project
     public $id;
     public $libelle;
     public $etat;
+    public $dateDebut;
+    public $dateFin;
     public $description;
     public $taches;
 
@@ -17,11 +19,13 @@ class Project
      * @param $etat
      * @param $description
      */
-    public function __construct($id, $libelle, $etat, $description, $taches)
+    public function __construct($id, $libelle, $etat, $dateDebut, $dateFin, $description, $taches)
     {
         $this->id = $id;
         $this->libelle = $libelle;
         $this->etat = $etat;
+        $this->dateDebut = $dateDebut;
+        $this->dateFin = $dateFin;
         $this->description = $description;
         $this->taches = $taches;
     }
