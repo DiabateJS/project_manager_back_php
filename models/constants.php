@@ -17,7 +17,7 @@ class Constants {
 
     //SQL TACHES
     public static $SQL_SELECT_TASKS = "select * from pm_tache where idProjet = :idProjet";
-    public static $SQL_SELECT_TASK = "select id, libelle, estimation, dateDebut, dateFin, description, etat, idProjet, (select fullname from pm_users where id = tache.idUser) as user from pm_tache where idProjet = :idProjet and id = :idTache";
+    public static $SQL_SELECT_TASK = "select id, libelle, estimation, dateDebut, dateFin, description, etat, idProjet, (select fullname from pm_users where id = pm_tache.idUser) as user from pm_tache where idProjet = :idProjet and id = :idTache";
     public static $SQL_UPDATE_TASK = "update pm_tache set libelle = :libelle , estimation = :estimation , dateDebut = :dateDebut, dateFin = :dateFin, description = :description , etat = :etat , idProjet = :idProjet , idUser = (select id from pm_users where fullname = :user) where id = :idTache";
     public static $SQL_CREATE_TASK = "insert into pm_tache(libelle, estimation, dateDebut, dateFin, description, etat, idProjet, idUser) values (:libelle, :estimation, :dateDebut, :dateFin, :description, :etat, :idProjet ,(select id from users where fullname = :user))";
     public static $SQL_DELETE_TASK = "delete from pm_tache where id = :idTache";
