@@ -122,11 +122,11 @@ class UserManager
             "idUser" => $idUser
         );
         $bdMan = new BdManager();
-        $sql_exist = "select idProjet, idUser from visibilite_projet where idProjet = :idProjet and idUser = :idUser";
+        $sql_exist = "select idProjet, idUser from pm_visibilite_projet where idProjet = :idProjet and idUser = :idUser";
         $entete = array("idProjet","idUser");
         $res = $bdMan->executePreparedSelect($sql_exist, $dicoParam, $entete);
         if (count($res) == 0){
-            $sql = "insert into visibilite_projet (idProjet, idUser) values (:idProjet, :idUser)";
+            $sql = "insert into pm_visibilite_projet (idProjet, idUser) values (:idProjet, :idUser)";
             $bdMan->executePreparedQuery($sql, $dicoParam);
             $resultat["code"] = Constants::$SUCCES_CODE;
         }else{
