@@ -51,7 +51,9 @@ class UserManager
         $res = $bdMan->executePreparedSelect($sql, $dicoParam, $entetes);
         if (count($res) > 0){
             $resultat["code"] = Constants::$SUCCES_CODE;
-            $resultat["message"] = $res[0]["fullname"];
+            $resultat["message"] = "";
+            $resultat["fullname"] = $res[0]["fullname"];
+            $resultat["id"] = $res[0]["id"];
         }
         return $resultat;
     }
@@ -110,6 +112,27 @@ class UserManager
         $bdMan = new BdManager();
         $bdMan->executePreparedQuery($sql, $dicoParam);
         $resultat["code"] = Constants::$SUCCES_CODE;
+        return $resultat;
+    }
+
+    public function addUserToProject($idUser, $idProjet){
+        $resultat = Helper::createResponseObject();
+        $dicoParam = array(
+            "idProjet" => $idProjet,
+            "idUser" => $idUser
+        );
+        $bdMan = new BdManager();
+        $sql_exist = "select idProjet, idUser from visibilite_projet where idProjet = :idProjet and idUser = :idUser";
+        $entete = array("idProjet","idUser");
+        $res = $bdMan->executePreparedSelect($sql_exist, $dicoParam, $entete);
+        if (count($res) == 0){
+            $sql = "insert into visibilite_projet (idProjet, idUser) values (:idProjet, :idUser)";
+            $bdMan->executePreparedQuery($sql, $dicoParam);
+            $resultat["code"] = Constants::$SUCCES_CODE;
+        }else{
+            $resultat["code"] = Constants::$WARNING_CODE;
+            $resultat["message"] = "Utilisateur déjà affecté au projet";
+        }
         return $resultat;
     }
 

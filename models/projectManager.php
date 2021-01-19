@@ -41,6 +41,31 @@ class ProjectManager
 
     }
 
+    public function getUserProjects($idUser) {
+        $sql = Constants::$SQL_SELECT_USER_PROJECTS;
+        $dico = array ("idUser" => $idUser);
+        $bdMan = new BdManager();
+        $entetes = array("id", "libelle", "etat", "dateDebut","dateFin","description");
+        $res = $bdMan->executePreparedSelect($sql, $dico, $entetes);
+        $projects = array();
+
+        for ($i = 0; $i < count($res); $i++) {
+            $id = $res[$i]["id"];
+            $libelle = $res[$i]["libelle"];
+            $etat = $res[$i]["etat"];
+            $dateDebut = $res[$i]["dateDebut"];
+            $dateFin = $res[$i]["dateFin"];
+            $description = $res[$i]["description"];
+            $taches = [];
+            $tacheManager = new TacheManager();
+            $taches = $tacheManager->getAllProjectsTache($id);
+            $currentProject = new Project($id, $libelle, $etat, $dateDebut, $dateFin, $description, $taches);
+            $projects[] = $currentProject;
+        }
+
+        return $projects;
+    }
+
     public function getProjectById($id)
     {
         $sql = Constants::$SQL_SELECT_PROJECT;
