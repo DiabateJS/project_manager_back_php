@@ -23,6 +23,11 @@
           $projetManager = new ProjectManager();
           echo json_encode($projetManager->getAllProjects());
       }
+      if ($type == "user_projects"){
+          $projetManager = new ProjectManager();
+          $idUser = $_GET["idUser"] ?? "";
+          echo json_encode($projetManager->getUserProjects($idUser));
+      }
       if ($type == "projet"){
           $projetManager = new ProjectManager();
           $idProjet = isset($_GET["idProjet"]) ? $_GET["idProjet"] : "";
@@ -129,6 +134,12 @@
             $newUser = new User($id, $fullname, $login, $password, $email, $profile);
             $userManager = new UserManager();
             echo json_encode($userManager->createUser($newUser));
+        }
+        if ($type == "add_to_project"){
+            $idUser = $data->idUser ?? "";
+            $idProject = $data->idProject ?? "";
+            $userManager = new UserManager();
+            echo json_encode($userManager->addUserToProject($idUser,$idProject));
         }
     }
     if ($operation == "delete"){

@@ -9,6 +9,7 @@ class Constants {
 
     //SQL PROJECTS
     public static $SQL_SELECT_PROJECTS = "select * from projet";
+    public static $SQL_SELECT_USER_PROJECTS = "select p.* from projet p, visibilite_projet vp where p.id = vp.idProjet and vp.idUser = :idUser";
     public static $SQL_SELECT_PROJECT = "select * from projet where id = :idProjet";
     public static $SQL_UPDATE_PROJECT = "update projet set libelle = :libelle , etat = :etat , dateDebut = :dateDebut, dateFin = :dateFin ,description = :description where id = :idProjet ";
     public static $SQL_INSERT_PROJECT = "insert into projet (libelle, etat, dateDebut, dateFin, description) values (:libelle, :etat, :dateDebut, :dateFin, :description)";
