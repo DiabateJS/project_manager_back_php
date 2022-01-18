@@ -16,20 +16,19 @@ class ProjectManager
 
     public function getAllProjects()
     {
-
-        $sql = Constants::$SQL_SELECT_PROJECTS;
+        $sql = Helper::transformQuery(Constants::$SQL_SELECT_PROJECTS, GlobalParams::$ENV);
         $bdMan = new BdManager();
-        $entetes = array("id", "libelle", "etat", "dateDebut","dateFin","description");
+        $entetes = Constants::$TABLE_PROJECT_COLOUMNS;
         $res = $bdMan->executeSelect($sql, $entetes);
         $projects = array();
 
         for ($i = 0; $i < count($res); $i++) {
-            $id = $res[$i]["id"];
-            $libelle = $res[$i]["libelle"];
-            $etat = $res[$i]["etat"];
-            $dateDebut = $res[$i]["dateDebut"];
-            $dateFin = $res[$i]["dateFin"];
-            $description = $res[$i]["description"];
+            $id = $res[$i][Constants::$ID];
+            $libelle = $res[$i][Constants::$LIBELLE];
+            $etat = $res[$i][Constants::$ETAT];
+            $dateDebut = $res[$i][Constants::$DATE_DEBUT];
+            $dateFin = $res[$i][Constants::$DATE_FIN];
+            $description = $res[$i][Constants::$DESCRIPTION];
             $taches = [];
             $tacheManager = new TacheManager();
             $taches = $tacheManager->getAllProjectsTache($id);
@@ -68,21 +67,21 @@ class ProjectManager
 
     public function getProjectById($id)
     {
-        $sql = Constants::$SQL_SELECT_PROJECT;
-        $dico = array ("idProjet" => $id);
+        $sql = Helper::transformQuery(Constants::$SQL_SELECT_PROJECT, GlobalParams::$ENV);
+        $dico = array (Constants::$ID_PROJET => $id);
         $bdMan = new BdManager();
-        $entetes = array("id","libelle","etat","dateDebut","dateFin","description");
+        $entetes = Constants::$TABLE_PROJECT_COLOUMNS;
         $res = $bdMan->executePreparedSelect($sql,$dico,$entetes);
         $_project = null;
 
         if (count($res) > 0)
         {
-            $_id = $res[0]["id"];
-            $_libelle = $res[0]["libelle"];
-            $_etat = $res[0]["etat"];
-            $_dateDebut = $res[0]["dateDebut"];
-            $_dateFin = $res[0]["dateFin"];
-            $_description = $res[0]["description"];
+            $_id = $res[0][Constants::$ID];
+            $_libelle = $res[0][Constants::$LIBELLE];
+            $_etat = $res[0][Constants::$ETAT];
+            $_dateDebut = $res[0][Constants::$DATE_DEBUT];
+            $_dateFin = $res[0][Constants::$DATE_FIN];
+            $_description = $res[0][Constants::$DESCRIPTION];
 
             $tacheManager = new TacheManager();
             $taches = $tacheManager->getAllProjectsTache($_id);

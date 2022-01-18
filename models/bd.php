@@ -14,7 +14,8 @@ class BdManager
   public function __construct() {
 		try
 		{
-      		$dico = GlobalParams::getBdDico();
+      		$dico = GlobalParams::$ENV == Constants::$LOCAL_ENV ? 
+			  		GlobalParams::$LOCAL_BD_CONFIG : GlobalParams::$PROD_BD_CONFIG;
 			$this->_db_host = $dico["host"];
 			$this->_db_user = $dico["user"];
 			$this->_db_pass = $dico["password"];

@@ -3,6 +3,7 @@ include_once('config.php');
 include_once('bd.php');
 include_once('tache.php');
 include_once('constants.php');
+include_once('../util/helper.php');
 
 
 class TacheManager
@@ -15,25 +16,25 @@ class TacheManager
 
     public function getAllProjectsTache($idProjet)
     {
-        $sql = Constants::$SQL_SELECT_TASKS;
+        $sql = Helper::transformQuery(Constants::$SQL_SELECT_TASKS, GlobalParams::$ENV);
         $dicoParam = array(
-            "idProjet" => $idProjet
+            Constants::$ID_PROJET => $idProjet
         );
         $bdMan = new BdManager();
-        $entetes = array("id", "libelle", "estimation", "dateDebut","dateFin","description", "etat", "idProjet", "idUser");
+        $entetes = Constants::$TABLE_PROJECT_TASK_COLUMNS;
         $res = $bdMan->executePreparedSelect($sql, $dicoParam, $entetes);
         $taches = array();
 
         for ($i = 0; $i < count($res); $i++) {
-            $id = $res[$i]["id"];
-            $libelle = $res[$i]["libelle"];
-            $estimation = $res[$i]["estimation"];
-            $dateDebut = $res[$i]["dateDebut"];
-            $dateFin = $res[$i]["dateFin"];
-            $description = $res[$i]["description"];
-            $etat = $res[$i]["etat"];
-            $idProjet = $res[$i]["idProjet"];
-            $idUser = $res[$i]["idUser"];
+            $id = $res[$i][Constants::$ID];
+            $libelle = $res[$i][Constants::$LIBELLE];
+            $estimation = $res[$i][Constants::$ESTIMATION];
+            $dateDebut = $res[$i][Constants::$DATE_DEBUT];
+            $dateFin = $res[$i][Constants::$DATE_FIN];
+            $description = $res[$i][Constants::$DESCRIPTION];
+            $etat = $res[$i][Constants::$ETAT];
+            $idProjet = $res[$i][Constants::$ID_PROJET];
+            $idUser = $res[$i][Constants::$ID_USER];
 
             $currentTache = new Tache($id, $libelle, $estimation, $dateDebut, $dateFin, $description, $etat, $idProjet, $idUser);
 
